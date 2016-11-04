@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+set -e
 
 log="$HOME/.windows.txt"
 max_lines=50400 #60*24*7*5
@@ -7,7 +8,7 @@ find_common()
 {
     string1="$1"
     string2="$2"
-    if [ ${#string1} -lt ${#string2} ]
+    if [[ ${#string1} -lt ${#string2} ]]
     then
             string1="$2"
             string2="$1"
@@ -25,9 +26,15 @@ find_common()
 
 truncate_log()
 {
-    lines=$(wc -l "$log" | awk '{print $1}')
-    to_delete=$((lines - max_lines))
-    [[ $to_delete -gt 0 ]] && sed -i "1,${to_delete}d" "$log"
+    if [[ -f "$log" ]]
+    then
+        lines=$(wc -l "$log" | awk '{print $1}')
+        if [[ $lines -gt $max_lines ]]
+        then
+          to_delete=$((lines - max_lines))
+          sed -i "1,${to_delete}d" "$log"
+        fi
+    fi
 }
 
 top_windows()
@@ -61,7 +68,7 @@ monitor()
 {
     while true
     do
-        if [ $(xprintidle) -lt 10000 ] #sprawdzic czy nie vlc
+        if [[ $(xprintidle) -lt 10000 ]] #sprawdzic czy nie vlc
         then
             xdotool getwindowfocus getwindowname >> "$log"
         fi

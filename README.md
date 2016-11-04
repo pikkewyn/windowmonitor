@@ -7,4 +7,5 @@ TODO:
 * [: -lt: unary operator expected
 * xprintidle
 * wc: /home/username/.windows.txt: No such file or directory
+* apt install xprintidle xdotool
 ```
