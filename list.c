@@ -7,11 +7,11 @@
 
 #include "list.h"
 
-struct List_node* list_node_new( char* id, void* data )
+struct List_node* list_node_new( char* text )
 {
     struct List_node* lnode = calloc( 1, sizeof( struct List_node ) );
-    lnode->id = id;
-    lnode->data = data;
+    lnode->text = text;
+    lnode->counter = 0;
     lnode->prev = NULL;
     lnode->next = NULL;
     return lnode;

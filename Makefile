@@ -3,17 +3,18 @@ SRC						=	$(wildcard *.c)
 OBJDIR				=	$(PWD)/obj
 OBJECTS 			= $(SRC:.c=.o)
 CC						=	gcc 
-CFLAGS				=	-std=gnu99 -g3 -Wall --pedantic -lXext -lXss
 PKCONFIG_FLAGS=$(shell pkg-config --cflags  x11 xmu)
 PKCONFIG_LIBS	=$(shell pkg-config --libs  x11 xmu)
+CFLAGS				=	-std=gnu99 -g3 -Wall --pedantic $(PKCONFIG_FLAGS) 
+LDFLAGS				= -lXext -lXss $(PKGCONFIG_LIBS)
 
 all: $(APP)
 
 $(APP): $(addprefix $(OBJDIR)/, $(OBJECTS))
-	$(CC) $(CFLAGS) $(PKCONFIG_FLAGS) $(PKCONFIG_LIBS) $(addprefix $(OBJDIR)/, *.o) -o $(APP)
+	$(CC) $(CFLAGS) $(addprefix $(OBJDIR)/, *.o) $(LDFLAGS) -o $(APP)
 
 $(OBJDIR)/%.o : %.c | $(OBJDIR)
-	$(CC) -c $(CFLAGS) $(PKCONFIG_FLAGS) $(PKCONFIG_LIBS) $< -o $@
+	$(CC) -c $(CFLAGS) $(PKCONFIG_LIBS) $(LDFLAGS) $< -o $@
 
 
 $(OBJDIR):

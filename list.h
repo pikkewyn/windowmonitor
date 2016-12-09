@@ -11,7 +11,7 @@ struct List_node
     struct List_node* next;
 };
 
-struct List_node* list_node_new( char const* text );
+struct List_node* list_node_new( char* text );
 void list_node_free( struct List_node* node );
 //void list_node_print( char*, void*, void* );
 
