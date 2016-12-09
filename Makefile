@@ -6,7 +6,7 @@ CC						=	gcc
 PKCONFIG_FLAGS=$(shell pkg-config --cflags  x11 xmu)
 PKCONFIG_LIBS	=$(shell pkg-config --libs  x11 xmu)
 CFLAGS				=	-std=gnu99 -g3 -Wall --pedantic $(PKCONFIG_FLAGS) 
-LDFLAGS				= -lXext -lXss $(PKGCONFIG_LIBS)
+LDFLAGS				= -lXext -lXss $(PKCONFIG_LIBS)
 
 all: $(APP)
 
