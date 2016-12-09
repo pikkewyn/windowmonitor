@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 set -e
 
 log="$HOME/.windows.txt"
@@ -13,7 +13,8 @@ find_common()
             string1="$2"
             string2="$1"
     fi
-    for ((i=${#string2}; i>0; i--)); do
+    for ((i=${#string2}; i>0; i--)); 
+    do
         for ((j=0; j<=${#string2}-i; j++)); do
             if [[ $string1 =~ ${string2:j:i} ]]
             then
@@ -40,7 +41,7 @@ truncate_log()
 top_windows()
 {
     truncate_log
-    sed "s/-[^-]*$//" "$log" | sort | uniq -c | sort -rn | awk '{ $1 = $1 / 6; $1 = "$1 min"; print $0 }'
+    sed "s/-[^-]*$//" "$log" | sort | uniq -c | sort -rn | awk '{ $1=$1/6;$1=$1" min"; print $0 }'
 
     exit 0
 }
@@ -49,7 +50,7 @@ top_apps()
 {
     truncate_log
     declare -a myarray
-    readarray myarray < <(sed "s/.*- \([^-]*\)$/\1/" "$log" | sort | uniq -c | sort -rn | awk '{ $1 = $1 / 6; print $0}')
+    readarray myarray < <(sed "s/.*- \([^-]*\)$/\1/" "$log" | sort | uniq -c | sort -rn | awk '{ $1=$1/6; $1=$1" min"; print $0}')
 
     # Explicitly report array content.
     for i in ${#myarray[@]}
