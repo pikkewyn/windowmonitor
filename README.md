@@ -8,4 +8,8 @@ TODO:
 * xprintidle
 * wc: /home/username/.windows.txt: No such file or directory
 * apt install xprintidle xdotool
+
+* print elements
+* free mem
+
 ```

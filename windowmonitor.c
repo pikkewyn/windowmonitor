@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <locale.h>
+#include <stdbool.h>
+#include <signal.h>
+#include <unistd.h>
 
 #include <X11/extensions/scrnsaver.h>
 #include <X11/Xlib.h>           // `apt-get install libx11-dev`
@@ -21,6 +24,7 @@
 #endif
 
 Bool xerror = False;
+static bool run = true;
 
 Display* open_display()
 {
@@ -169,40 +173,59 @@ unsigned long idle( Display* display )
     return SS_info->idle / 1000;
 }
 
-struct Title_occurence {
-  char* title;
-  unsigned int occurences;
-};
+void sigint_handler( int const signum )
+{
+    run = false;
+		printf( "signal handler\n" );
+}
 
-struct Class_occurence {
-  char* title;
-  unsigned int occurences;
-};
+bool set_sigint_action()
+{
+    struct sigaction sig_action;
+    sig_action.sa_handler = sigint_handler;
+    sig_action.sa_flags = 0;
+    sigemptyset( &sig_action.sa_mask );
 
+    if( sigaction( SIGINT, &sig_action, NULL ) == -1 )
+    {
+        perror( "sigaction" );
+        return false;
+    }
+
+    return true;
+}
 
 int main( void )
 {
+		if( set_sigint_action() == false )
+    		return EXIT_FAILURE;
+
     Display* d;
     Window w;
     setlocale( LC_ALL, "" );
     d = open_display();
     XSetErrorHandler( handle_error );
-    struct List* titles_list = list_new();
-    struct List* class_list = list_new();
-
-    w = get_focus_window( d );
-    w = get_top_window( d, w );
-    w = get_named_window( d, w );
-    char* window_title = get_window_title( d, w );
-    char* window_class = get_window_class( d, w );
 
     struct List* title_list = list_new();
-    list_push_front( title_list, window_title );
+
+    while( run )
+    {
+      w = get_focus_window( d );
+      w = get_top_window( d, w );
+      w = get_named_window( d, w );
+      char* window_title = get_window_title( d, w );
+      char* window_class = get_window_class( d, w );
+
+      list_push_front( title_list, window_title );
+    	printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_class, window_title, idle( d ) );
+			sleep( 10 );
+    }
 
 
-    printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_class, window_title, idle( d ) );
-    free( window_class );
-    free( window_title );
+		list_for_each( title_list, list_node_print );
+
+    //free( window_class );
+    //free( window_title );
     XCloseDisplay( d );
 }
 

@@ -7,7 +7,7 @@
 
 #include "list.h"
 
-struct List_node* list_node_new( void* text )
+struct List_node* list_node_new( char* text )
 {
     struct List_node* lnode = calloc( 1, sizeof( struct List_node ) );
     lnode->text = text;
@@ -23,11 +23,9 @@ void list_node_free( struct List_node* lnode )
 }
 
 
-void list_node_print( char* id, void* data, void* arg )
+void list_node_print( int counter, char* text )
 {
-    ( void ) data;
-    ( void ) arg;
-    printf( "%s\n", id );
+    printf( "%s: %d\n", text, counter );
 }
 
 struct List* list_new()
@@ -62,7 +60,7 @@ void list_free( struct List* list )
 void list_push_front( struct List* list, char* text )
 {
     assert( list );
-    struct List_node* lnode = list_node_new( id, data );
+    struct List_node* lnode = list_node_new( text );
     lnode->next = list->head;
     lnode->prev = NULL;
 
@@ -79,7 +77,7 @@ void list_push_front( struct List* list, char* text )
     }
 }
 
-void list_sorted_insert( struct List* list, char* id, void* data )
+/*void list_sorted_insert( struct List* list, text )
 {
     assert( list );
 
@@ -126,13 +124,13 @@ void list_sorted_insert( struct List* list, char* id, void* data )
     {
         list->head = lnode;
     }
-}
+}*/
 
 
-void list_push_back( struct List* list, char* id, void* data )
+void list_push_back( struct List* list, char* text )
 {
     assert( list );
-    struct List_node* newNode = list_node_new( id, data );
+    struct List_node* newNode = list_node_new( text );
     newNode->next = NULL;
     newNode->prev = list->tail;
 
@@ -151,7 +149,7 @@ void list_push_back( struct List* list, char* id, void* data )
 
 char* list_pop_front( struct List* list, void** data )
 {
-    assert( list );
+/*    assert( list );
 
     if( list->head == NULL )
     {
@@ -171,16 +169,16 @@ char* list_pop_front( struct List* list, void** data )
 
     if( data != NULL )
     {
-        *data = lnode->data;
+        *data = lnode->text;
     }
 
     free( lnode );
-    return id;
+    return id;*/
 }
 
 char* list_pop_back( struct List* list, void** data )
 {
-    assert( list );
+/*    assert( list );
 
     if( list->tail == NULL )
     {
@@ -200,18 +198,18 @@ char* list_pop_back( struct List* list, void** data )
 
     if( data != NULL )
     {
-        *data = lnode->data;
+        *data = lnode->text;
     }
 
     free( lnode );
-    return id;
+    return id;*/
 }
 
 
 
 bool list_node_exists( struct List* list, char const* id )
 {
-    assert( list );
+/*    assert( list );
     assert( id );
     struct List_node* lnode = list->head;
 
@@ -227,12 +225,12 @@ bool list_node_exists( struct List* list, char const* id )
         }
     }
 
-    return false;
+    return false;*/
 }
 
 void list_del_node( struct List* list, char const* id )
 {
-    struct List_node* prev = NULL;
+/*    struct List_node* prev = NULL;
     struct List_node* node = list->head;
 
     while( node != NULL )
@@ -254,18 +252,18 @@ void list_del_node( struct List* list, char const* id )
 
         prev = node;
         node = node->next;
-    }
+    }*/
 }
 
 
-void list_for_each( struct List* list, void( *func )( char*, void* ) )
+void list_for_each( struct List* list, void( *func )( int, char* ) )
 {
     assert( list );
     struct List_node* tmp = list->head;
 
     while( tmp != NULL )
     {
-        func( tmp->id, tmp->data );
+        func( tmp->counter, tmp->text );
         tmp = tmp->next;
     }
 }
