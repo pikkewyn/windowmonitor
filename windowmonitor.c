@@ -196,7 +196,9 @@ int main( void )
     char* window_title = get_window_title( d, w );
     char* window_class = get_window_class( d, w );
 
-    
+    struct List* title_list = list_new();
+    list_push_front( title_list, window_title );
+
 
     printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_class, window_title, idle( d ) );
     free( window_class );

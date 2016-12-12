@@ -7,11 +7,10 @@
 
 #include "list.h"
 
-struct List_node* list_node_new( char* text )
+struct List_node* list_node_new( void* text )
 {
     struct List_node* lnode = calloc( 1, sizeof( struct List_node ) );
     lnode->text = text;
-    lnode->counter = 0;
     lnode->prev = NULL;
     lnode->next = NULL;
     return lnode;
@@ -48,7 +47,7 @@ struct List_node* list_end( struct List* list )
 {
     return list->tail;
 }
-/*
+
 void list_free( struct List* list )
 {
     if( list == NULL )
@@ -60,7 +59,7 @@ void list_free( struct List* list )
     list = NULL;
 }
 
-void list_push_front( struct List* list, char* id, void* data )
+void list_push_front( struct List* list, char* text )
 {
     assert( list );
     struct List_node* lnode = list_node_new( id, data );
@@ -270,5 +269,3 @@ void list_for_each( struct List* list, void( *func )( char*, void* ) )
         tmp = tmp->next;
     }
 }
-*/
-
