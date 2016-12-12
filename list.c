@@ -11,6 +11,7 @@ struct List_node* list_node_new( char* text )
 {
     struct List_node* lnode = calloc( 1, sizeof( struct List_node ) );
     lnode->text = text;
+		lnode->counter = 1;
     lnode->prev = NULL;
     lnode->next = NULL;
     return lnode;
