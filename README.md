@@ -9,7 +9,8 @@ TODO:
 * wc: /home/username/.windows.txt: No such file or directory
 * apt install xprintidle xdotool
 
-* print elements
++ * print elements
 * free mem
++ sorted insert
 
 ```

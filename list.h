@@ -27,7 +27,7 @@ struct List_node* list_end( struct List* );
 void list_free( struct List* );
 void list_push_front( struct List*, char* );
 void list_push_back( struct List*, char* );
-void list_sorted_insert( struct List*, char*, void* );
+void list_sorted_insert( struct List*, char* );
 char* list_pop_front( struct List*, void** );
 char* list_pop_back( struct List*, void** );
 void list_del_node( struct List*, char const* );

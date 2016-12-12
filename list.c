@@ -77,54 +77,32 @@ void list_push_front( struct List* list, char* text )
     }
 }
 
-/*void list_sorted_insert( struct List* list, text )
+void list_sorted_insert( struct List* list, char* text )
 {
     assert( list );
 
     if( list->head == NULL )
     {
-        list_push_back( list, id, data );
+        list_push_back( list, text );
         return;
     }
 
     struct List_node* tmp = list->head;
 
-    int comparison;
-
-    while( tmp != NULL && ( comparison = strcmp( tmp->id, id ) ) < 0 )
+    while( tmp != NULL )
     {
-        tmp = tmp->next;
+				if( strcmp( tmp->text, text ) == 0 )
+				{
+        		tmp->counter++;
+						return;
+				}
+				
+				tmp = tmp->next;
     }
 
-    if( comparison == 0 )
-    {
-        return;
-    }
-
-    if( tmp == NULL )
-    {
-        list_push_back( list, id, data );
-        return;
-    }
-
-    struct List_node* lnode = list_node_new( id, data );
-
-    lnode->next = tmp;
-
-    lnode->prev = tmp->prev;
-
-    if( tmp->prev != NULL )
-    {
-        tmp->prev->next = lnode;
-    }
-
-    tmp->prev = lnode;
-
-    if( tmp == list->head )
-    {
-        list->head = lnode;
-    }
-}*/
+    list_push_back( list, text );
+    return;
+}
 
 
 void list_push_back( struct List* list, char* text )

@@ -216,7 +216,7 @@ int main( void )
       char* window_title = get_window_title( d, w );
       char* window_class = get_window_class( d, w );
 
-      list_push_front( title_list, window_title );
+      list_sorted_insert( title_list, window_title );
     	printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_class, window_title, idle( d ) );
 			sleep( 10 );
     }
