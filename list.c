@@ -78,7 +78,7 @@ void list_push_front( struct List* list, char* text )
     }
 }
 
-void list_sorted_insert( struct List* list, char* text )
+void list_accumulated_insert( struct List* list, char* text )
 {
     assert( list );
 
@@ -246,3 +246,59 @@ void list_for_each( struct List* list, void( *func )( int, char* ) )
         tmp = tmp->next;
     }
 }
+
+
+struct List_node* List_merge( struct List_node* first, struct List_node* second )
+{
+    if (!first)
+        return second;
+ 
+    if (!second)
+        return first;
+ 
+
+    if( first->counter < second->counter )
+    {
+        first->next = List_merge( first->next,second );
+        first->next->prev = first;
+        first->prev = NULL;
+        return first;
+    }
+    else
+    {
+        second->next = List_merge( first,second->next );
+        second->next->prev = second;
+        second->prev = NULL;
+        return second;
+    }
+}
+
+
+struct List_node* List_split( struct List_node* head )
+{
+    struct List_node* fast = head, *slow = head;
+    while( fast->next && fast->next->next )
+    {
+        fast = fast->next->next;
+        slow = slow->next;
+    }
+
+    struct List_node *temp = slow->next;
+    slow->next = NULL;
+    return temp;
+}
+ 
+struct List_node* List_merge_sort( struct List_node *head )
+{
+    if( !head || !head->next )
+        return head;
+    struct List_node* second = List_split( head );
+ 
+    head = List_merge_sort( head );
+    second = List_merge_sort( second );
+ 
+    return List_merge( head, second );
+}
+
+
+
