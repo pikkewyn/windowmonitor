@@ -27,7 +27,7 @@
 Bool xerror = False;
 static bool run = true;
 
-char* longest_common_string( char* string1, char* string2 ) 
+char* longest_common_string( char const* string1, char const* string2 ) 
 {
 	int strlen1 = strlen( string1 );
 	int strlen2 = strlen( string2 );
@@ -90,6 +90,16 @@ char* longest_common_string( char* string1, char* string2 )
 	}
 
   return result;
+}
+
+void test_longest_common_substring( void )
+{
+    char const* string1 = "Ala ma kota"; 
+    char const* string2 = ", a kot jest Ali"; 
+
+    char* result = longest_common_string( string1, string2 );
+
+    printf( "%s\n", result );
 }
 
 Display* open_display()
@@ -261,58 +271,6 @@ bool set_sigint_action()
 	return true;
 }
 
-int LongestCommonSubstring( char const* str1, char const* str2 )
-{
-     if( str1 == NULL || str2 == NULL )
-     {
-          return 0;
-     }
-
-		 int str1_len = strlen( str1 );
-		 int str2_len = strlen( str2 );
-
-		 int buf_len = str1_len > str2_len ? str1_len : str2_len;
-
-     int *curr = calloc( buf_len, 1 );
-     int *prev = calloc( buf_len, 1 );
-     int *swap = NULL;
-     int maxSubstr = 0;
-
-     for(int i = 0; i<str1_len; ++i)
-     {
-          for(int j = 0; j<str2_len; ++j)
-          {
-               if(str1[i] != str2[j])
-               {
-                    curr[j] = 0;
-               }
-               else
-               {
-                    if(i == 0 || j == 0)
-                    {
-                         curr[j] = 1;
-                    }
-                    else
-                    {
-                         curr[j] = 1 + prev[j-1];
-                    }
-                    //The next if can be replaced with:
-                    //maxSubstr = max(maxSubstr, curr[j]);
-                    //(You need algorithm.h library for using max())
-                    if(maxSubstr < curr[j])
-                    {
-                         maxSubstr = curr[j];
-                    }
-               }
-          }
-          swap=curr;
-          curr=prev;
-          prev=swap;
-     }
-     free( curr );
-     free( prev );
-     return maxSubstr;
-}
 
 bool hyphen_split( char const* input, char* before, char* after )
 {
@@ -326,7 +284,7 @@ bool hyphen_split( char const* input, char* before, char* after )
   return true;
 }
 
-void test_hypen_split()
+void test_hypen_split( void )
 {
   {
     char const* text = "- ";
@@ -345,6 +303,7 @@ void test_hypen_split()
 int main( void )
 {
   test_hypen_split();
+  test_longest_common_substring();
 	
   if( set_sigint_action() == false )
 			return EXIT_FAILURE;

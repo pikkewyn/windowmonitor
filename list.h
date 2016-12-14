@@ -6,6 +6,9 @@
 struct List_node
 {
     char* text;
+    //char* title;
+    //char* decription;
+    //char* class;
     int counter;
     struct List_node* prev;
     struct List_node* next;
