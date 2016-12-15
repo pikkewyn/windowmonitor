@@ -6,9 +6,7 @@
 struct List_node
 {
     char* text;
-    //char* title;
-    //char* decription;
-    //char* class;
+    //int timestamp
     int counter;
     struct List_node* prev;
     struct List_node* next;
@@ -31,7 +29,7 @@ struct List_node* list_end( struct List* );
 void list_free( struct List* );
 void list_push_front( struct List*, char* );
 void list_push_back( struct List*, char* );
-void list_accumulated_insert( struct List*, char* );
+void list_accumulated_insert( struct List*, char*, bool( *comparator )( char*, char* ) );
 void list_ordered_action( struct List* list, void( *func )( int, char* ) );
 char* list_pop_front( struct List*, void** );
 char* list_pop_back( struct List*, void** );

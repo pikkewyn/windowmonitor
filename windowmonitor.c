@@ -126,6 +126,7 @@ int handle_error( Display* display, XErrorEvent* error )
 	( void ) error;
 	DEBUG( ( "ERROR: X11 error\n" ) );
 	xerror = True;
+
 	return 1;
 }
 
@@ -276,10 +277,18 @@ bool hyphen_split( char const* input, char* before, char* after )
 {
   char* hyphen = strrchr( input, '-' );
 
+  if( before != NULL || after != NULL )
+  {
+      return false;
+  }
+
   if( hyphen == NULL || *( hyphen + 1 ) == '\0' )
   {
     return false;
   }
+
+  before = strndup( input, hyphen - input );
+  after = strdup( hyphen );
 
   return true;
 }
@@ -315,17 +324,24 @@ int main( void )
 	XSetErrorHandler( handle_error );
 
 	struct List* title_list = list_new();
+	struct List* description_list = list_new();
 
 	while( run )
 	{
 		w = get_focus_window( d );
 		w = get_top_window( d, w );
 		w = get_named_window( d, w );
-		char* window_title = get_window_title( d, w );
-		char* window_class = get_window_class( d, w );
+		
+    char* window_title = get_window_title( d, w );
+    char* description = NULL;
+    char* title = NULL;
+    hyphen_split( window_title, description, title );
+    free( window_title );
 
-		list_accumulated_insert( title_list, window_title );
-		printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_class, window_title, idle( d ) );
+		list_accumulated_insert( title_list, title );
+		list_accumulated_insert( description_list, title );
+		
+    printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_title, idle( d ) );
 		
 		sleep( 10 );
 	}
@@ -342,12 +358,16 @@ int main( void )
 
 /*TODO:
 * if idle < 10
-* accumulate add to list title and class and timestamp ( in one struct !!), meanwhile remove older elements
+* accumulate add to list title  and timestamp ( in one struct !!), meanwhile remove older elements
 * on SIGTERM:
 	Catch SIGTERM. In the handler, read the /var/run/utmp file to get the runlevel. See the source code of the runlevel(8) command for reference.
 	save to logfile
 * on SIGUSR1...
 * data can be also ketp in shared memory
 * split by the last hyphen ( first from the end )
+* handle new fields in list - actually three different lists
+* use hypen split
+* alfred-like display
+* static functions, consts
 */
   

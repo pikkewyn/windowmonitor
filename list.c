@@ -78,7 +78,7 @@ void list_push_front( struct List* list, char* text )
     }
 }
 
-void list_accumulated_insert( struct List* list, char* text )
+void list_accumulated_insert( struct List* list, char* text, ( bool )( *comparator )( char*, char* ) )
 {
     assert( list );
 
@@ -92,7 +92,7 @@ void list_accumulated_insert( struct List* list, char* text )
 
     while( tmp != NULL )
     {
-				if( strcmp( tmp->text, text ) == 0 )
+				if( comparator( tmp->text, text ) )
 				{
         		tmp->counter++;
 						return;
@@ -183,8 +183,6 @@ char* list_pop_back( struct List* list, void** data )
     free( lnode );
     return id;*/
 }
-
-
 
 bool list_node_exists( struct List* list, char const* id )
 {
