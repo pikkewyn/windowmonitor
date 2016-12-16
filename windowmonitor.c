@@ -29,10 +29,12 @@ static bool run = true;
 
 char* longest_common_string( char const* string1, char const* string2 ) 
 {
+  if( string1 == NULL || string2 == NULL )
+    return NULL;
+
 	int strlen1 = strlen( string1 );
 	int strlen2 = strlen( string2 );
 
-	int len = strlen1 < strlen2 ? strlen1 : strlen2;
 	int longest = 0;
 	
   int **ptr = malloc( 2 * sizeof( int* ) );
@@ -84,23 +86,50 @@ char* longest_common_string( char const* string1, char const* string2 )
 	
   char* result = calloc( strlen1, 1 ); 
   
-	for( int i = 0; ret[++i] != -1; ) 
+	for( int i = 0; ret[++i] != -1 && i < strlen1; ) 
   {
 		sprintf( result, "%.*s", longest, &string1[ret[i] - longest+1] );
 	}
 
+  free( ret );
   return result;
 }
 
-void test_longest_common_substring( void )
+void test_longest_common_string( void )
 {
-    char const* string1 = "Ala ma kota"; 
-    char const* string2 = ", a kot jest Ali"; 
+    //char const* string1 = "Ala ma kota"; 
+    //char const* string2 = ", a kot jest Ali"; 
 
-    char* result = longest_common_string( string1, string2 );
+    //char* result = longest_common_string( string1, string2 );
+    //TODO: add assert
 
-    printf( "%s\n", result );
+    //printf( "%s\n", result );
 }
+
+bool str_is_similar( char const* str1, char const* str2, int factor )
+{
+  bool result = false;
+ 
+  if( strcmp( str1, str2 ) == 0 )
+  {
+      return true;
+  }
+
+  char* substring = longest_common_string( str1, str2 );
+
+  if( substring == NULL )
+  {
+    return false;
+  }
+
+  if( strlen( substring ) >= factor )
+    result = true;
+  
+  free( substring );
+
+  return result;
+}
+
 
 Display* open_display()
 {
@@ -247,7 +276,10 @@ unsigned long idle( Display* display )
 {
 	XScreenSaverInfo* SS_info = XScreenSaverAllocInfo();
 	XScreenSaverQueryInfo( display, DefaultRootWindow( display ), SS_info );
-	return SS_info->idle / 1000;
+  unsigned long result = SS_info->idle / 1000;
+  XFree( SS_info );
+
+  return result;
 }
 
 void sigint_handler( int const signum )
@@ -273,22 +305,22 @@ bool set_sigint_action()
 }
 
 
-bool hyphen_split( char const* input, char* before, char* after )
+bool hyphen_split( char const* input, char** before, char** after )
 {
   char* hyphen = strrchr( input, '-' );
 
-  if( before != NULL || after != NULL )
+  if( *before != NULL || *after != NULL )
   {
       return false;
   }
 
-  if( hyphen == NULL || *( hyphen + 1 ) == '\0' )
+  if( hyphen == NULL || *( hyphen + 1 ) == '\0' ||  *( hyphen + 2 ) == '\0' )
   {
-    return false;
+      return false;
   }
 
-  before = strndup( input, hyphen - input );
-  after = strdup( hyphen );
+  *before = strndup( input, hyphen - input );
+  *after = strdup( hyphen + 2 );
 
   return true;
 }
@@ -299,20 +331,33 @@ void test_hypen_split( void )
     char const* text = "- ";
     char* description = NULL;
     char* name = NULL;
-    assert( hyphen_split( text, description, name ) == true );
+    assert( hyphen_split( text, &description, &name ) == false );
   }
   {
-    char const* text = "-";
+    char const* text = "ala ma - kota";
     char* description = NULL;
     char* name = NULL;
-    assert( hyphen_split( text, description, name ) == false );
+    assert( hyphen_split( text, &description, &name ) == true );
+    free( description );
+    free( name );
+  }
+  {
+    char const* text = "ala - ma";
+    char* description = NULL;
+    char* name = NULL;
+    hyphen_split( text, &description, &name );
+    assert( strcmp( description, "ala " ) == 0 );
+    assert( strcmp( name, "ma" ) == 0 );
+
+    free( description );
+    free( name );
   }
 }
 
 int main( void )
 {
   test_hypen_split();
-  test_longest_common_substring();
+  test_longest_common_string();
 	
   if( set_sigint_action() == false )
 			return EXIT_FAILURE;
@@ -335,21 +380,33 @@ int main( void )
     char* window_title = get_window_title( d, w );
     char* description = NULL;
     char* title = NULL;
-    hyphen_split( window_title, description, title );
-    free( window_title );
-
-		list_accumulated_insert( title_list, title );
-		list_accumulated_insert( description_list, title );
+    int const factor = 5;
+    
+    if( hyphen_split( window_title, &description, &title ) )
+    {
+        free( window_title );
+        list_accumulated_insert( title_list, title, str_is_similar, factor );
+		    list_accumulated_insert( description_list, description, str_is_similar, factor );
+        printf( "window title: %s\nwindow description: %s\nidle: %ld\n", title, description, idle( d ) );
+    }
+    else {
+        list_accumulated_insert( title_list, window_title, str_is_similar, factor );
+        printf( "window title: %s\nidle: %ld\n", window_title, idle( d ) );
+    }
 		
-    printf( "window class: %s\nwindow title: %s\nidle: %ld\n", window_title, idle( d ) );
 		
 		sleep( 10 );
 	}
 
 
 	title_list->head = List_merge_sort( title_list->head );
+	description_list->head = List_merge_sort( description_list->head );
 
 	list_for_each( title_list, list_node_print );
+	list_for_each( description_list, list_node_print );
+
+  list_free( title_list );
+  list_free( description_list );
 
 	//free( window_class );
 	//free( window_title );

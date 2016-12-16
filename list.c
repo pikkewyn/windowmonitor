@@ -26,7 +26,13 @@ void list_node_free( struct List_node* lnode )
 
 void list_node_print( int counter, char* text )
 {
-    printf( "%s: %d\n", text, counter );
+    if( text == NULL )
+    {
+        printf( "NULL: %d\n", counter );
+    }
+    else {
+      printf( "%s: %d\n", text, counter );
+    }
 }
 
 struct List* list_new()
@@ -49,11 +55,23 @@ struct List_node* list_end( struct List* list )
 
 void list_free( struct List* list )
 {
-    if( list == NULL )
+    if( list == NULL || list->head == NULL )
     {
         return;
     }
 
+    struct List_node* curr = list->head;
+
+    while( curr != NULL )
+    {
+        struct List_node* next = curr->next;
+        
+        free( curr->text );
+        free( curr );
+
+        curr = next;
+    }
+    
     free( list );
     list = NULL;
 }
@@ -78,9 +96,14 @@ void list_push_front( struct List* list, char* text )
     }
 }
 
-void list_accumulated_insert( struct List* list, char* text, ( bool )( *comparator )( char*, char* ) )
+void list_accumulated_insert( struct List* list, char* text, bool ( *comparator )( char const*, char const*, int ), int factor )
 {
     assert( list );
+
+    if( text == NULL )
+    {
+        return;
+    }
 
     if( list->head == NULL )
     {
@@ -92,7 +115,7 @@ void list_accumulated_insert( struct List* list, char* text, ( bool )( *comparat
 
     while( tmp != NULL )
     {
-				if( comparator( tmp->text, text ) )
+				if( comparator( tmp->text, text, factor ) )
 				{
         		tmp->counter++;
 						return;
