@@ -426,5 +426,6 @@ int main( void )
 * use hypen split
 * alfred-like display
 * static functions, consts
+* case insesitive characters comparison
 */
   
