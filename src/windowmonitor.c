@@ -401,6 +401,7 @@ int main( void )
 
 	title_list->head = List_merge_sort( title_list->head );
 	description_list->head = List_merge_sort( description_list->head );
+  //TODO: seralize here to locked file
 
 	list_for_each( title_list, list_node_print );
 	list_for_each( description_list, list_node_print );
@@ -419,8 +420,8 @@ int main( void )
 * on SIGTERM:
 	Catch SIGTERM. In the handler, read the /var/run/utmp file to get the runlevel. See the source code of the runlevel(8) command for reference.
 	save to logfile
-* on SIGUSR1...
-* data can be also ketp in shared memory
+* on SIGUSR1 just dump sorted to file without ending( fork when proper variable is set and dump copy? )
+* data can be also ketp in shared memory: ./ltalk2/test/ltalk-shared/server.c:    pthread_mutexattr_setpshared( &attributes, PTHREAD_PROCESS_SHARED );
 * split by the last hyphen ( first from the end )
 * handle new fields in list - actually three different lists
 * use hypen split

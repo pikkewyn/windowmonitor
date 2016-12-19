@@ -35,6 +35,39 @@ void list_node_print( int counter, char* text )
     }
 }
 
+void list_node_serialize( FILE* storage, struct List_node* list_node )
+{
+    if( text != NULL )
+    {
+        fprintf( storage, "%s:%d\n", text, counter );
+    }
+}
+
+void list_node_deserialize( char* data, struct List* list )
+{
+    if( data == NULL )
+    {
+        return;
+    }
+
+    char* delimiter = strchr( data, ':' );
+
+    if( delimiter == NULL || *( delimiter + 1 ) == '\0' )
+    {
+        return;
+    }
+
+    char* text = strndup( data, hyphen - input );
+    int counter = strtol( hyphen + 1, NULL, 0 );
+
+    //list_push_back( list, text, counter );
+    //list_accumulated_insert( list, title, str_is_similar, factor );
+
+    return true;
+}
+
+
+
 struct List* list_new()
 {
     struct List* list = calloc( 1, sizeof( struct List ) );
@@ -96,6 +129,8 @@ void list_push_front( struct List* list, char* text )
     }
 }
 
+
+//push back doesn't contain counter setting but it SHOULD
 void list_accumulated_insert( struct List* list, char* text, bool ( *comparator )( char const*, char const*, int ), int factor )
 {
     assert( list );
@@ -255,7 +290,7 @@ void list_del_node( struct List* list, char const* id )
     }*/
 }
 
-
+//TODO: vargs?
 void list_for_each( struct List* list, void( *func )( int, char* ) )
 {
     assert( list );
@@ -267,6 +302,20 @@ void list_for_each( struct List* list, void( *func )( int, char* ) )
         tmp = tmp->next;
     }
 }
+
+void list_serialize( struct List* list, char const* filename )
+{
+    assert( list );
+    struct List_node* tmp = list->head;
+
+    while( tmp != NULL )
+    {
+        func( tmp->counter, tmp->text );
+        tmp = tmp->next;
+    }
+}
+
+
 
 
 struct List_node* List_merge( struct List_node* first, struct List_node* second )
